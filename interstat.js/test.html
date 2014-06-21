@@ -1,0 +1,99 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>interstat.js Test page</title>
+<script type="text/javascript" src="files/rstatic.js"></script>
+<script type="text/javascript" src="files/sort.js"></script>
+<script type="text/javascript" src="files/prototypes.js"></script>
+<script type="text/javascript" src="files/distributions.js"></script>
+
+<script type="text/javascript" src="files/rcompat.js"></script>
+<script type="text/javascript" src="files/structures.js"></script>
+<script type="text/javascript" src="files/primitives.js"></script>
+
+
+<script type="text/javascript">
+
+function evaluateText()
+{
+    var inEl = document.getElementById('input');
+    var outEl = document.getElementById('console');
+    var status = document.getElementById('statusmessage');
+    var intext = inEl.value;
+    var e;
+    try {
+        e = eval(intext);
+        outEl.innerHTML += '<strong>&gt; ' + intext + '</strong>\n';
+        if (e != undefined) outEl.innerHTML += e.toString() + '\n';
+        inEl.value = '';
+        statusmessage.textContent = "";
+    }
+    catch (err) {
+        statusmessage.textContent = err.toString();
+    }
+}
+
+function R(s, port) // evaluate 's' as an R expression using AJAX 
+{
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open("GET", "http://127.0.0.1:"+port+"/custom/intermedio/"+s,
+                 false); // async=false, at least for now
+    xmlhttp.send();
+    return JSON.parse(xmlhttp.responseText);
+}
+
+document.onkeyup = function handleKey(e)
+{
+    if (!e) e = window.event;
+    if (e.ctrlKey && e.keyCode == 13) evaluateText();
+}
+
+
+
+
+</script>
+
+<style type="text/css">
+
+body
+{
+  margin:auto;
+  width: 900px;
+}
+
+textarea#input
+{
+  width: 100%;
+  background: rgb(250,255,230);
+}
+
+div#console
+{
+  white-space: pre;
+  font-family: monospace;
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="console"></div>
+
+<textarea id="input" id="textInput" rows=10>
+// write code to be evaluated
+</textarea>
+
+<input type="button" id="evalbutton" value="Evaluate (Ctrl+Enter)" onclick='evaluateText()'>
+<p id="statusmessage"></p>
+
+<canvas height=400 width=700 id="mycanvas">
+ <label><input type=checkbox id=showA> Show As</label>
+</canvas>
+
+<p>
+<input type="button" id="canvasbutton" value="Initialize Canvas" onclick='initCanvas()'>
+
+
+</body>
+</html>
