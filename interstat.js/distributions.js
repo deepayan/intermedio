@@ -2,6 +2,17 @@
 
 // standard distributions
 
+// Partly done:
+
+// Normal : function(mean, sd)
+// Exponential : function(rate)
+// Uniform : function(smin, smax)
+// Binomial : function(size, prob)
+
+// TODO:
+
+
+
 var Distribution = {
 
     Normal : function(mean, sd)
