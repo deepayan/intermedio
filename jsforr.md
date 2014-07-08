@@ -546,9 +546,9 @@ This of course does not copy the prototype, nor whatever makes
 
 ## Informative articles ##
 
-1. (Events)[http://www.quirksmode.org/js/introevents.html]
+1. [Events](http://www.quirksmode.org/js/introevents.html)
 
-2. (Problems with subclassing arrays)[http://perfectionkills.com/how-ecmascript-5-still-does-not-allow-to-subclass-an-array/]
+2. [Problems with subclassing arrays](http://perfectionkills.com/how-ecmascript-5-still-does-not-allow-to-subclass-an-array/)
 
 
 
