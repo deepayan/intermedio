@@ -9,9 +9,9 @@ mypanel.scatter <- function(x, y, subscripts, vp, sceneGraph, gpar) {
     x_diff <- x - mean(x) 
     is_outlier <- abs(x_diff) > 1.5
     my_colors <- ifelse(is_outlier, "red", "steelblue")
-    warning(my_colors);
-    ## gpar$stroke <- "white"
-    ## gpar$fill <- my_colors
+    console.log(my_colors);
+    gpar$stroke <- "white"
+    gpar$fill <- my_colors
     cp.tpoints(x, y, subscripts, vp, sceneGraph, gpar)
   }
 

@@ -35,6 +35,15 @@ r2js <- function(expr) {
       return(paste0(lhs, " = ", rhs))
     }
     
+    # Handle the '$' operator
+    if (fn_name == "$") {
+      obj <- r2js(expr[[2]])
+      # The right hand side of $ in R is an unquoted symbol.
+      # We extract its character representation for JS dot notation.
+      prop <- as.character(expr[[3]])
+      return(paste0(obj, ".", prop))
+    }
+    
     # Handle standard binary operators by translating to Rstatic vectorized functions
     bin_ops <- list(
       "+" = "Rstatic.sum2",     # Note: using interstat's existing sum2 or a new Rstatic.add
