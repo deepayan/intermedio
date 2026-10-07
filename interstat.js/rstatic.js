@@ -295,6 +295,71 @@ var Rstatic = function() {
 	return p;
     }
 
+    // Vectorization helpers
+    var vectorize1 = function(fn) {
+        return function(x) {
+            if (x instanceof Array || ArrayBuffer.isView(x)) return x.map(fn);
+            return fn(x);
+        }
+    }
+
+    var vectorize2 = function(fn) {
+        return function(x, y) {
+            var isArrX = x instanceof Array || ArrayBuffer.isView(x);
+            var isArrY = y instanceof Array || ArrayBuffer.isView(y);
+            if (!isArrX && !isArrY) return fn(x, y);
+            if (isArrX && !isArrY) return x.map(function(v) { return fn(v, y); });
+            if (!isArrX && isArrY) return y.map(function(v) { return fn(x, v); });
+            var n = Math.min(x.length, y.length);
+            var result = new Array(n);
+            for (var i = 0; i < n; i++) result[i] = fn(x[i], y[i]);
+            return result;
+        }
+    }
+
+    // Vectorized Math Operations
+    var add = vectorize2(function(a, b) { return a + b; });
+    var sub = vectorize2(function(a, b) { return a - b; });
+    var mult = vectorize2(function(a, b) { return a * b; });
+    var div = vectorize2(function(a, b) { return a / b; });
+    var abs = vectorize1(Math.abs);
+    var sqrt = vectorize1(Math.sqrt);
+    var exp = vectorize1(Math.exp);
+    var log = vectorize1(Math.log);
+
+    // Vectorized Relational and Logical Operations
+    var eq = vectorize2(function(a, b) { return a === b; });
+    var neq = vectorize2(function(a, b) { return a !== b; });
+    var lt = vectorize2(function(a, b) { return a < b; });
+    var gt = vectorize2(function(a, b) { return a > b; });
+    var le = vectorize2(function(a, b) { return a <= b; });
+    var ge = vectorize2(function(a, b) { return a >= b; });
+    var and = vectorize2(function(a, b) { return a && b; });
+    var or = vectorize2(function(a, b) { return a || b; });
+    var not = vectorize1(function(a) { return !a; });
+
+    // Vectorized ifelse
+    var ifelse = function(cond, yes, no) {
+        var isArrCond = cond instanceof Array || ArrayBuffer.isView(cond);
+        if (!isArrCond) return cond ? yes : no;
+        var isArrYes = yes instanceof Array || ArrayBuffer.isView(yes);
+        var isArrNo = no instanceof Array || ArrayBuffer.isView(no);
+        var result = new Array(cond.length);
+        for (var i = 0; i < cond.length; i++) {
+            var yVal = isArrYes ? yes[i % yes.length] : yes;
+            var nVal = isArrNo ? no[i % no.length] : no;
+            result[i] = cond[i] ? yVal : nVal;
+        }
+        return result;
+    }
+    
+    // Aggregations
+    var max = function(x) { return Math.max.apply(null, x); }
+    var min = function(x) { return Math.min.apply(null, x); }
+    var range = function(x) { return [min(x), max(x)]; }
+    var mean = function(x) { return sum(x) / x.length; }
+    var length = function(x) { return (x instanceof Array || ArrayBuffer.isView(x)) ? x.length : 1; }
+
     var ans = {
 
 	stopifnot : stopifnot,
@@ -318,6 +383,13 @@ var Rstatic = function() {
 	multiplyBy : multiplyBy,
 	factorial : factorial,
 	choose : choose,
+
+    // New additions
+    add: add, sub: sub, mult: mult, div: div,
+    abs: abs, sqrt: sqrt, exp: exp, log: log,
+    eq: eq, neq: neq, lt: lt, gt: gt, le: le, ge: ge,
+    and: and, or: or, not: not, ifelse: ifelse,
+    max: max, min: min, range: range, mean: mean, length: length
 
     }
     return ans;
